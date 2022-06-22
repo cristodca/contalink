@@ -145,6 +145,15 @@ function App() {
   return (
     <div className="bg-contalink-50 min-h-screen py-12">
       <div className="container mx-auto px-4 lg:p-0">
+        <motion.h1
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 50 }}
+          transition={{ type: "spring", duration: 1, delay: 0 }}
+          className='text-contalink-200 font-bold text-4xl mb-4 text-center'
+        >
+          Cristopher D. Chavez - Contalink
+        </motion.h1>
         {/* Select Date Form */}
         <motion.form
           initial={{ opacity: 0, y: 50 }}
