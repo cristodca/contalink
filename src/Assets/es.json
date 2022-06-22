@@ -1,0 +1,22 @@
+{
+  "formTitle": "Selecciona fecha inicial y final",
+  "formSeparator": "a:",
+  "formSubmit": "Obtener facturas",
+  "controlsPrev": "Anterior",
+  "controlsNext": "Siguiente",
+  "searchBar": "Buscar...",
+  "orderBy": "Ordenar por:",
+  "orderOpt0": "Sin orden",
+  "orderOpt1": "Número de factura ⬆",
+  "orderOpt2": "Número de factura ⬇",
+  "orderOpt3": "Total ⬆",
+  "orderOpt4": "Total ⬇",
+  "orderOpt5": "Más antiguos",
+  "orderOpt6": "Más recientes",
+  "filterBy": "Filtrar por:",
+  "filterOpt0": "Sin filtro",
+  "filterOpt1": "Cancelados",
+  "filterOpt2": "Vigentes",
+  "showResultsFrom": "Resultados del",
+  "showResultsTo": "al"
+}

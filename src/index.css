@@ -1,6 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn-primary {
+    @apply bg-contalink-500 text-white py-3 px-6 rounded-lg font-medium transition-all duration-150 hover:cursor-pointer hover:bg-contalink-600;
+  }
+  .btn-disabled {
+    @apply disabled:bg-neutral-200 disabled:border-neutral-200 disabled:text-neutral-600 disabled:cursor-not-allowed hover:disabled:bg-neutral-200 hover:disabled:border-neutral-200 hover:disabled:text-neutral-600 hover:disabled:cursor-not-allowed;
+  }
+  .form-input {
+    @apply bg-white rounded-lg border py-2 px-4;
+  }
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
