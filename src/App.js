@@ -1,9 +1,12 @@
+// Dependecies
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { motion } from "framer-motion";
 
-import es from "./Assets/es.json";
-import en from "./Assets/en.json";
+// Components
 import InvoiceCard from "./Components/InvoiceCard";
+
+// Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronLeft,
@@ -12,9 +15,12 @@ import {
   faSearch,
   faTableCellsLarge,
 } from "@fortawesome/free-solid-svg-icons";
+import { ReactComponent as NoSearch } from "./Assets/Svg/no-data.svg";
 
+
+// Main
 function App() {
-  const [lang, setLang] = useState(en);
+  // States
   const [dateStart, setDateStart] = useState("");
   const [dateEnd, setDateEnd] = useState("");
   const [invoices, setInvoices] = useState("");
@@ -25,6 +31,7 @@ function App() {
   const [max, setMax] = useState(16);
   const [listOrder, setListOrder] = useState(false);
 
+  // Función para controlar el envío de las fechas, es una validación extra, en caso de que se pueda dar clic al botón sin tener las fechas establecidas
   function handleSubmit(event) {
     event.preventDefault();
 
@@ -36,9 +43,12 @@ function App() {
       alert("No hay fecha de fin");
       return;
     }
+
+    // Si ambas fechas están establecidas llama a la función
     getInvoices(dateStart, dateEnd);
   }
 
+  // Función para obtener las facturas directamente de la API.
   function getInvoices(date_start, date_end) {
     const queryParams = new FormData();
     queryParams.append("date_start", date_start);
@@ -57,20 +67,15 @@ function App() {
         config
       )
       .then((res) => {
+        // Si la respuesta es correcta guarda las facturas en estado
         if (res.status === 200) {
           setInvoices(res.data.invoices);
-          console.log(res.data.invoices);
         }
       })
-      .catch((err) => console.log(err));
+      .catch(() => {});
   }
 
-  function getLang() {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("lang");
-    }
-  }
-
+  // Functión para cambiar el orden de los datos dependiendo de los casos disponibles
   function changeOrder(newOrder) {
     switch (newOrder) {
       case "0":
@@ -128,30 +133,35 @@ function App() {
         );
         break;
       default:
+        // Si no hay un orden establecido, se llama a la función para obtener el orden inicial
         getInvoices(dateStart, dateEnd);
         break;
     }
   }
 
-  useEffect(() => {
-    if (getLang() === "es") {
-      setLang(es);
-    } else {
-      setLang(en);
-    }
-  }, [filter, order]);
+  // El componente se re-renderiza solo caundo cambia un filtro o el orden
+  useEffect(() => {}, [filter, order]);
 
   return (
     <div className="bg-contalink-50 min-h-screen py-12">
       <div className="container mx-auto px-4 lg:p-0">
         {/* Select Date Form */}
-        <form
+        <motion.form
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 50 }}
+          transition={{ type: "spring", duration: 1, delay: 0 }}
           className="bg-white rounded-2xl p-4 shadow border flex flex-col md:flex-row align-center justify-between gap-8 max-w-3xl mx-auto"
           onSubmit={(event) => handleSubmit(event)}
         >
-          <div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ type: "spring", duration: 1, delay: 0 }}
+          >
             <p className="text-contalink-600 font-bold text-xl mb-4">
-              {lang.formTitle}
+              Seleccione la fecha de inicio y final
             </p>
             <div className="flex flex-col md:flex-row align-center gap-2">
               <input
@@ -162,9 +172,7 @@ function App() {
                 value={dateStart}
                 onChange={(event) => setDateStart(event.target.value)}
               />
-              <span className="flex items-center justify-center">
-                {lang.formSeparator}
-              </span>
+              <span className="flex items-center justify-center">a:</span>
               <input
                 type="date"
                 name="date_end"
@@ -174,26 +182,34 @@ function App() {
                 onChange={(event) => setDateEnd(event.target.value)}
               />
             </div>
-          </div>
+          </motion.div>
           <div className="flex items-center justify-end">
             <input
-              className=" bg-contalink-500 text-white py-3 px-6 rounded-lg font-medium transition-all duration-150 hover:cursor-pointer hover:bg-contalink-600"
+              className=" bg-contalink-500 text-white py-3 px-6 rounded-lg font-medium transition-all duration-150 hover:cursor-pointer hover:bg-contalink-600 btn-disabled"
               type="submit"
-              value={lang.formSubmit}
+              disabled={!dateStart || !dateEnd}
+              value="Obtener facturas"
             />
           </div>
-        </form>
+        </motion.form>
 
         {/* Grid Data */}
         {invoices && (
-          <div className="mt-16 md:mt-32">
+          <motion.div
+            initial={{ opacity: 0, y: 300 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 300 }}
+            transition={{ type: "spring", duration: 1, delay: 0 }}
+            className="mt-16 md:mt-32"
+          >
+            {/* Barra de búsqueda, filtros y orden */}
             <div className="bg-contalink-50 z-50 sticky top-0 py-4 sm:col-span-2 lg:col-span-3 xl:col-span-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               <div className="sm:col-span-2 lg:col-span-1 xl:col-span-2 h-12">
                 <div className="relative h-full">
                   <input
                     type="text"
                     className="bg-white rounded-lg pl-4 pr-16 py-3 border absolute top-0 bottom-0 left-0 right-0"
-                    placeholder={lang.searchBar}
+                    placeholder="Buscar..."
                     value={search}
                     onChange={(event) => {
                       setSearch(event.target.value);
@@ -205,19 +221,19 @@ function App() {
                 </div>
               </div>
               <div className="flex items-center justify-end">
-                {lang.filterBy}
+                Filtrar por:
                 <select
                   className="ml-4 p-2 rounded-lg"
                   defaultValue={filter}
                   onChange={(event) => setFilter(event.target.value)}
                 >
-                  <option value="">{lang.filterOpt0}</option>
-                  <option value="Cancelado">{lang.filterOpt1}</option>
-                  <option value="Vigente">{lang.filterOpt2}</option>
+                  <option value="">Sin filtros</option>
+                  <option value="Cancelado">Cancelados</option>
+                  <option value="Vigente">Vigentes</option>
                 </select>
               </div>
               <div className="flex justify-end items-center">
-                {lang.orderBy}
+                Ordenar por:
                 <select
                   className="ml-4 p-2 rounded-lg"
                   defaultValue={order}
@@ -226,16 +242,18 @@ function App() {
                     setOrder(event.target.value);
                   }}
                 >
-                  <option value="">{lang.orderOpt0}</option>
-                  <option value="0">{lang.orderOpt1}</option>
-                  <option value="1">{lang.orderOpt2}</option>
-                  <option value="2">{lang.orderOpt3}</option>
-                  <option value="3">{lang.orderOpt4}</option>
-                  <option value="4">{lang.orderOpt5}</option>
-                  <option value="5">{lang.orderOpt6}</option>
+                  <option value="">Sin orden</option>
+                  <option value="0">Número de factura ⬆</option>
+                  <option value="1">Número de factura ⬇</option>
+                  <option value="2">Total ⬆</option>
+                  <option value="3">Total ⬇</option>
+                  <option value="4">Más antiguos</option>
+                  <option value="5">Más recientes</option>
                 </select>
               </div>
             </div>
+
+            {/* Tabla principal de información */}
             <div
               className={`grid grid-cols-1 ${
                 !listOrder && "sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
@@ -243,9 +261,10 @@ function App() {
             >
               {invoices &&
                 invoices.map((invoice, index) => {
+                  // Si hay una cantidad establecida se asegura que solo se rendericen los elementos correspondientes
                   if (min <= index && min + max > index) {
-                    if (filter) {
-                      if (filter === invoice.status) {
+                    if (filter) { // Se estableció un filtro
+                      if (filter === invoice.status) { // Si el filtro coincide con el estado entonces lo muesrta
                         return (
                           <InvoiceCard
                             key={invoice.id}
@@ -256,8 +275,11 @@ function App() {
                           />
                         );
                       }
+                      // Si el filtro no coincide con el estado, entonces no renderiza nada, pero ejecuta return para no continuar con la función
                       return "";
                     }
+
+                    // Si hay un parámetro de búsqueda, compara con todas las posibilidades para no complicar al usuario
                     if (search) {
                       if (
                         invoice.invoice_number
@@ -286,6 +308,8 @@ function App() {
                       }
                       return "";
                     }
+
+                    // Si no hay filtros ni búsquedas, simplemente muestra todos los elementos
                     return (
                       <InvoiceCard
                         key={invoice.id}
@@ -296,9 +320,13 @@ function App() {
                       />
                     );
                   }
+
+                  // Si el elemeto está fuera del rango de min y max, entonces no lo renderiza
                   return "";
                 })}
             </div>
+
+            {/* Controles de navegación */}
             <div className="bg-contalink-50 py-4 grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-8">
               <div className="flex items-center lg:col-span-2 xl:col-span-3">
                 <button
@@ -316,18 +344,20 @@ function App() {
 
                 <div className="py-4 md:py-0">
                   Ver{" "}
-                  <select className='form-input mr-2' defaultValue={max} onChange={(event) => setMax(parseInt(event.target.value))}>
-                    <option value='4'>4</option>
-                    <option value='8'>8</option>
-                    <option value='16'>16</option>
-                    <option value='32'>32</option>
-                    <option value='64'>64</option>
+                  <select
+                    className="form-input mr-2"
+                    defaultValue={max}
+                    onChange={(event) => setMax(parseInt(event.target.value))}
+                  >
+                    <option value="4">4</option>
+                    <option value="8">8</option>
+                    <option value="16">16</option>
+                    <option value="32">32</option>
+                    <option value="64">64</option>
+                    <option value={invoices.length}>Todo</option>
                   </select>
-
-                  {lang.showResultsFrom}{" "}
-                  {min}{" "}
-                  {lang.showResultsTo}{" "}
-                  {min + max}
+                  Resultados entre {min} y{" "}
+                  {min + max <= invoices.length ? min + max : invoices.length}
                 </div>
               </div>
               <div className="flex items-center justify-between sm:justify-end">
@@ -340,7 +370,7 @@ function App() {
                     )
                   }
                 >
-                  <FontAwesomeIcon icon={faChevronLeft} /> {lang.controlsPrev}
+                  <FontAwesomeIcon icon={faChevronLeft} />
                 </button>
                 <button
                   className="bg-contalink-500 text-white ml-4 py-3 px-6 rounded-lg font-medium transition-all duration-150 hover:cursor-pointer hover:bg-contalink-600 btn-disabled"
@@ -353,11 +383,24 @@ function App() {
                     )
                   }
                 >
-                  {lang.controlsNext} <FontAwesomeIcon icon={faChevronRight} />
+                  <FontAwesomeIcon icon={faChevronRight} />
                 </button>
               </div>
             </div>
-          </div>
+          </motion.div>
+        )}
+
+        {/* No se han buscado facturas */}
+        {!invoices && (
+          <>
+            <div className="max-w-sm mx-auto">
+              <h2 className="text-contalink-500 font-medium text-2xl text-center mt-16">
+                Al parecer todavía no realizas una búsqueda, prueba ingresando
+                dos fechas.
+              </h2>
+              <NoSearch className="max-w-full" />
+            </div>
+          </>
         )}
       </div>
     </div>
